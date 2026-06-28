@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đơn Nghỉ Phép</title>
+
+  <!-- SeaTalk Login SDK -->
+  <script src="https://open.seatalk.io/sdk/seatalk_login.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F2F4F7;
+      --surface:   #FFFFFF;
+      --primary:   #1A6FE8;
+      --primary-h: #1558C0;
+      --danger:    #E83D3D;
+      --success:   #1DBF73;
+      --text:      #1A1D23;
+      --muted:     #6B7280;
+      --border:    #E2E6EC;
+      --radius:    10px;
+      --shadow:    0 2px 12px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      color: var(--text);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .card-header {
+      background: var(--primary);
+      padding: 24px 28px 20px;
+      color: #fff;
+    }
+    .card-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.2px;
+    }
+    .card-header p {
+      font-size: 13px;
+      opacity: .82;
+      margin-top: 4px;
+    }
+
+    /* ── Body ── */
+    .card-body { padding: 28px; }
+
+    /* ── Steps ── */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* ── Login step ── */
+    .login-box {
+      text-align: center;
+      padding: 12px 0 4px;
+    }
+    .login-box .icon {
+      font-size: 48px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .login-box h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .login-box p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* SeaTalk button wrapper */
+    #seatalk_login_button_wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Form ── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      transition: border-color .15s;
+      outline: none;
+      font-family: inherit;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+    }
+    .field input[readonly] {
+      background: var(--bg);
+      color: var(--muted);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── User badge ── */
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 10px 13px;
+      margin-bottom: 22px;
+    }
+    .user-badge .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .user-badge .info { line-height: 1.35; }
+    .user-badge .name { font-size: 14px; font-weight: 600; }
+    .user-badge .code { font-size: 12px; color: var(--muted); }
+
+    /* ── Buttons ── */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, opacity .15s;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-h); }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* ── Alert ── */
+    .alert {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .alert.show { display: block; }
+    .alert-error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .alert-success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+
+    /* ── Success state ── */
+    .success-box {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .success-box .check {
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .success-box h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-box p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .req-id {
+      display: inline-block;
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: monospace;
+      color: var(--primary);
+      margin-top: 10px;
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 400px) {
+      .field-row { grid-template-columns: 1fr; }
+      .card-body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ -->
+<!--  SeaTalk App Info (hidden element) -->
+<!-- ═══════════════════════════════════ -->
+<div id="seatalk_login_app_info"
+  data-appid="YOUR_SEATALK_APP_ID"
+  data-redirect_uri="YOUR_REDIRECT_URI"
+  data-response_type="code"
+  data-state="leave_form"
+  style="display:none">
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!--  Card                              -->
+<!-- ═══════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <h1>📋 Đơn Nghỉ Phép</h1>
+    <p>HN2 Station · SPX Express</p>
+  </div>
+
+  <div class="card-body">
+
+    <!-- STEP 1: Login -->
+    <div class="step active" id="step-login">
+      <div class="login-box">
+        <div class="icon">🔐</div>
+        <h2>Xác thực tài khoản</h2>
+        <p>Đăng nhập bằng tài khoản SeaTalk<br>để tiếp tục điền đơn nghỉ phép.</p>
+        <div id="seatalk_login_button_wrap">
+          <div id="seatalk_login_button"></div>
+        </div>
+        <div class="alert alert-error" id="login-error"></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Form -->
+    <div class="step" id="step-form">
+      <div class="alert alert-error" id="form-error"></div>
+
+      <div class="user-badge" id="user-badge">
+        <div class="avatar" id="user-avatar">?</div>
+        <div class="info">
+          <div class="name" id="user-name">—</div>
+          <div class="code" id="user-code">—</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Team Lead phê duyệt</label>
+        <select id="tl-select">
+          <option value="">— Đang tải danh sách... —</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Loại nghỉ phép</label>
+        <select id="leave-type">
+          <option value="">— Chọn loại nghỉ —</option>
+          <option value="Nghỉ phép năm">Nghỉ phép năm</option>
+          <option value="Nghỉ bệnh">Nghỉ bệnh</option>
+          <option value="Nghỉ việc riêng">Nghỉ việc riêng</option>
+          <option value="Nghỉ không lương">Nghỉ không lương</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Ngày bắt đầu</label>
+          <input type="date" id="start-date" />
+        </div>
+        <div class="field">
+          <label>Ngày kết thúc</label>
+          <input type="date" id="end-date" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Lý do</label>
+        <textarea id="reason" placeholder="Nhập lý do nghỉ phép..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">
+        Gửi đơn nghỉ phép
+      </button>
+    </div>
+
+    <!-- STEP 3: Success -->
+    <div class="step" id="step-success">
+      <div class="success-box">
+        <div class="check">✅</div>
+        <h2>Đơn đã được gửi!</h2>
+        <p>Team Lead sẽ nhận được thông báo<br>và phê duyệt đơn của bạn qua SeaTalk.</p>
+        <div class="req-id" id="req-id-display"></div>
+      </div>
+    </div>
+
+  </div><!-- /card-body -->
+</div><!-- /card -->
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════
+const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let empCode = '';
+let empName = '';
+
+// ═══════════════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════════════
+function showStep(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showError(elemId, msg) {
+  const el = document.getElementById(elemId);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function hideError(elemId) {
+  const el = document.getElementById(elemId);
+  el.textContent = '';
+  el.classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// OAUTH CALLBACK
+// Khi SeaTalk redirect về, URL sẽ có ?code=xxx
+// ═══════════════════════════════════════════════
+async function handleOAuthCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+
+  if (!code || state !== 'leave_form') return;
+
+  // Xóa code khỏi URL (bảo mật)
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  try {
+    const res = await fetch(`${GAS_URL}?action=verify&code=${encodeURIComponent(code)}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      showError('login-error', '⚠️ Xác thực thất bại: ' + (data.error || 'Lỗi không xác định'));
+      return;
+    }
+
+    empCode = data.empCode;
+    empName = data.empName;
+
+    // Cập nhật user badge
+    document.getElementById('user-name').textContent = empName;
+    document.getElementById('user-code').textContent = empCode;
+    document.getElementById('user-avatar').textContent = empName.charAt(0).toUpperCase();
+
+    // Load Team Leads
+    await loadTeamLeads();
+
+    // Set ngày mặc định = hôm nay
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').value = today;
+    document.getElementById('end-date').value = today;
+    document.getElementById('start-date').min = today;
+    document.getElementById('end-date').min = today;
+
+    showStep('step-form');
+
+  } catch (err) {
+    showError('login-error', '⚠️ Không thể kết nối máy chủ. Vui lòng thử lại.');
+    console.error(err);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// LOAD TEAM LEADS
+// ═══════════════════════════════════════════════
+async function loadTeamLeads() {
+  try {
+    const res = await fetch(`${GAS_URL}?action=teamleads`);
+    const data = await res.json();
+
+    const select = document.getElementById('tl-select');
+    select.innerHTML = '<option value="">— Chọn Team Lead —</option>';
+
+    if (data.success && data.leads) {
+      data.leads.forEach(tl => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify({ code: tl.code, name: tl.name });
+        opt.textContent = tl.name;
+        select.appendChild(opt);
+      });
+    }
+  } catch (err) {
+    console.error('Load team leads error:', err);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SUBMIT FORM
+// ═══════════════════════════════════════════════
+async function submitForm() {
+  hideError('form-error');
+
+  // Validate
+  const tlRaw     = document.getElementById('tl-select').value;
+  const leaveType = document.getElementById('leave-type').value;
+  const startDate = document.getElementById('start-date').value;
+  const endDate   = document.getElementById('end-date').value;
+  const reason    = document.getElementById('reason').value.trim();
+
+  if (!tlRaw)     return showError('form-error', '⚠️ Vui lòng chọn Team Lead.');
+  if (!leaveType) return showError('form-error', '⚠️ Vui lòng chọn loại nghỉ phép.');
+  if (!startDate) return showError('form-error', '⚠️ Vui lòng chọn ngày bắt đầu.');
+  if (!endDate)   return showError('form-error', '⚠️ Vui lòng chọn ngày kết thúc.');
+  if (endDate < startDate) return showError('form-error', '⚠️ Ngày kết thúc phải sau ngày bắt đầu.');
+  if (!reason)    return showError('form-error', '⚠️ Vui lòng nhập lý do.');
+  if (reason.length > 200) return showError('form-error', '⚠️ Lý do tối đa 200 ký tự.');
+
+  const tl = JSON.parse(tlRaw);
+
+  // Format ngày DD/MM/YYYY
+  const fmt = d => d.split('-').reverse().join('/');
+
+  // Submit
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Đang gửi...';
+
+  try {
+    const params = new URLSearchParams({
+      action:    'submit',
+      empCode,
+      empName,
+      tlCode:    tl.code,
+      tlName:    tl.name,
+      leaveType,
+      startDate: fmt(startDate),
+      endDate:   fmt(endDate),
+      reason
+    });
+
+    const res = await fetch(`${GAS_URL}?${params.toString()}`);
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('req-id-display').textContent = 'Mã đơn: #' + data.reqId;
+      showStep('step-success');
+    } else {
+      showError('form-error', '⚠️ ' + (data.error || 'Gửi đơn thất bại.'));
+      btn.disabled = false;
+      btn.textContent = 'Gửi đơn nghỉ phép';
+    }
+  } catch (err) {
+    showError('form-error', '⚠️ Không thể kết nối máy chủ. Vui lòng thử lại.');
+    btn.disabled = false;
+    btn.textContent = 'Gửi đơn nghỉ phép';
+    console.error(err);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// VALIDATE DATES
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('start-date').addEventListener('change', function() {
+    document.getElementById('end-date').min = this.value;
+    if (document.getElementById('end-date').value < this.value) {
+      document.getElementById('end-date').value = this.value;
+    }
+  });
+
+  // Xử lý OAuth callback ngay khi load
+  handleOAuthCallback();
+});
+</script>
+
+</body>
+</html>
