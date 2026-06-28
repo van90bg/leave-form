@@ -399,7 +399,10 @@ async function handleOAuthCallback() {
   window.history.replaceState({}, document.title, window.location.pathname);
 
   try {
-    const res = await fetch(`${GAS_URL}?action=verify&code=${encodeURIComponent(code)}`);
+    const res = await fetch(
+      `${GAS_URL}?action=verify&code=${encodeURIComponent(code)}`,
+      { redirect: 'follow' }   // thêm dòng này
+    );
     const data = await res.json();
 
     if (!data.success) {
