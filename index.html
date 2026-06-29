@@ -6,11 +6,7 @@
   <title>Đơn Nghỉ Phép</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #F2F4F7; --surface: #FFFFFF; --primary: #1A6FE8;
-      --primary-h: #1558C0; --text: #1A1D23; --muted: #6B7280;
-      --border: #E2E6EC; --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,.08);
-    }
+    :root { --bg: #F2F4F7; --surface: #FFFFFF; --primary: #1A6FE8; --text: #1A1D23; --muted: #6B7280; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg); min-height: 100vh;
@@ -18,153 +14,36 @@
       padding: 24px 16px; color: var(--text);
     }
     .card {
-      background: var(--surface); border-radius: var(--radius);
-      box-shadow: var(--shadow); width: 100%; max-width: 480px; overflow: hidden;
+      background: var(--surface); border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08); width: 100%; max-width: 480px;
+      padding: 48px 28px; text-align: center;
     }
-    .card-header { background: var(--primary); padding: 24px 28px 20px; color: #fff; }
-    .card-header h1 { font-size: 18px; font-weight: 600; }
-    .card-header p  { font-size: 13px; opacity: .82; margin-top: 4px; }
-    .card-body { padding: 28px; }
-    .login-box { text-align: center; padding: 12px 0 4px; }
-    .login-box .icon { font-size: 48px; line-height: 1; margin-bottom: 16px; }
-    .login-box h2 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-    .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-    #seatalk_login_button_wrap { display: flex; justify-content: center; min-height: 44px; }
-    #seatalk_login_button { display: flex; justify-content: center; }
-    .btn-seatalk-fallback {
-      background: var(--primary); color: #fff; border: none;
-      border-radius: 8px; padding: 12px 24px; font-size: 14px;
-      font-weight: 600; cursor: pointer; font-family: inherit;
-      display: none;
-    }
-    .btn-seatalk-fallback:hover { background: var(--primary-h); }
-    .loading-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(255,255,255,.75);
-      align-items: center; justify-content: center;
-      flex-direction: column; gap: 12px; z-index: 100;
-    }
-    .loading-overlay.show { display: flex; }
-    .loading-overlay p { font-size: 13px; color: var(--muted); }
     .spinner {
-      display: inline-block; width: 20px; height: 20px;
+      display: inline-block; width: 24px; height: 24px;
       border: 3px solid rgba(26,111,232,.2);
       border-top-color: var(--primary); border-radius: 50%;
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .debug-box {
-      margin-top: 16px; padding: 10px; background: #f8f9fa;
-      border: 1px solid #dee2e6; border-radius: 6px;
-      font-size: 12px; color: #6c757d; text-align: left;
-    }
+    p { font-size: 13px; color: var(--muted); margin-top: 12px; }
   </style>
 </head>
 <body>
-
-<div id="seatalk_login_app_info"
-  data-appid="NDk1ODMxNDEwNTc5"
-  data-redirect_uri="https://van90bg.github.io/leave-form/"
-  data-response_type="code"
-  data-state="leave_form"
-  style="display:none">
-</div>
-
-<div class="loading-overlay" id="loading">
-  <div class="spinner"></div>
-  <p>Đang xác thực...</p>
-</div>
-
 <div class="card">
-  <div class="card-header">
-    <h1>📋 Đơn Nghỉ Phép</h1>
-    <p>HN2 Station · SPX Express</p>
-  </div>
-  <div class="card-body">
-    <div class="login-box">
-      <div class="icon">🔐</div>
-      <h2>Xác thực tài khoản</h2>
-      <p>Đăng nhập bằng tài khoản SeaTalk<br>để tiếp tục điền đơn nghỉ phép.</p>
-
-      <div id="seatalk_login_button_wrap">
-        <div id="seatalk_login_button" data-size="large" data-theme="default"></div>
-      </div>
-
-      <button class="btn-seatalk-fallback" id="btn-fallback" onclick="loginFallback()">
-        🔑 Đăng nhập với SeaTalk
-      </button>
-
-      <div class="alert alert-error" id="login-error" style="display:none;margin-top:16px;padding:10px 14px;border-radius:8px;font-size:13px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA"></div>
-
-      <div class="debug-box" id="debug-box" style="display:none">
-        <strong>Debug:</strong><br>
-        SDK loaded: <span id="dbg-sdk">...</span><br>
-        URL params: <span id="dbg-params">...</span>
-      </div>
-    </div>
-  </div>
+  <div class="spinner"></div>
+  <p>Đang mở form...</p>
 </div>
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbx54kvjD6zZP3X-PeJYzuJ1Za2Y6J3NTl1ata6B-sfDICV5yGh3Sbx6xSp5TJtTVDY7Gg/exec';
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
 
-function showError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg; el.style.display = 'block';
+if (token) {
+  window.location.href = GAS_URL + '?action=verifytoken&token=' + encodeURIComponent(token);
+} else {
+  document.querySelector('p').textContent = 'Không tìm thấy token. Vui lòng mở từ SeaTalk.';
 }
-
-function setLoading(on, msg) {
-  const el = document.getElementById('loading');
-  if (msg) el.querySelector('p').textContent = msg;
-  el.classList.toggle('show', on);
-}
-
-function dbg(key, val) {
-  const box = document.getElementById('debug-box');
-  if (box) { box.style.display = 'block'; document.getElementById('dbg-' + key).textContent = val; }
-}
-
-function loginFallback() {
-  alert('⚠️ SeaTalk SDK không tải được.\n\nVui lòng mở form trong SeaTalk (bấm link từ bot) thay vì browser thông thường.');
-}
-
-function handleOAuthCallback() {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  const state = params.get('state');
-
-  dbg('params', code ? 'code=' + code.slice(0, 8) + '... state=' + state : 'không có code');
-
-  if (!code || state !== 'leave_form') return;
-
-  window.history.replaceState({}, document.title, window.location.pathname);
-  setLoading(true, 'Đang xác thực tài khoản...');
-
-  // Redirect thẳng sang GAS — GAS sẽ serve form HTML
-  window.location.href = GAS_URL + '?action=verify&code=' + encodeURIComponent(code);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  handleOAuthCallback();
-
-  const script = document.createElement('script');
-  script.src = 'https://static.cdn.haiserve.com/seatalk/client/shared/sop/auth.js';
-  script.onload = () => dbg('sdk', 'loaded \u2705');
-  script.onerror = () => {
-    dbg('sdk', 'FAILED \u274C');
-    document.getElementById('btn-fallback').style.display = 'inline-block';
-  };
-  document.head.appendChild(script);
-
-  setTimeout(() => {
-    const btn = document.getElementById('seatalk_login_button');
-    if (!btn.children.length && !btn.innerHTML.trim()) {
-      dbg('sdk', 'timeout');
-      document.getElementById('btn-fallback').style.display = 'inline-block';
-    }
-  }, 4000);
-});
 </script>
-
 </body>
 </html>
