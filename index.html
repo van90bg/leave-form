@@ -25,61 +25,19 @@
     .card-header h1 { font-size: 18px; font-weight: 600; }
     .card-header p  { font-size: 13px; opacity: .82; margin-top: 4px; }
     .card-body { padding: 28px; }
-    .step { display: none; }
-    .step.active { display: block; }
     .login-box { text-align: center; padding: 12px 0 4px; }
     .login-box .icon { font-size: 48px; line-height: 1; margin-bottom: 16px; }
     .login-box h2 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
     .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-    /* SDK button container */
     #seatalk_login_button_wrap { display: flex; justify-content: center; min-height: 44px; }
     #seatalk_login_button { display: flex; justify-content: center; }
-    /* Fallback button nếu SDK không load */
     .btn-seatalk-fallback {
       background: var(--primary); color: #fff; border: none;
       border-radius: 8px; padding: 12px 24px; font-size: 14px;
       font-weight: 600; cursor: pointer; font-family: inherit;
-      display: none; /* ẩn mặc định, chỉ show khi SDK fail */
+      display: none;
     }
     .btn-seatalk-fallback:hover { background: var(--primary-h); }
-    .field { margin-bottom: 18px; }
-    .field label {
-      display: block; font-size: 13px; font-weight: 500;
-      color: var(--muted); margin-bottom: 6px;
-      letter-spacing: .2px; text-transform: uppercase;
-    }
-    .field input, .field select, .field textarea {
-      width: 100%; padding: 10px 13px; border: 1.5px solid var(--border);
-      border-radius: 8px; font-size: 14px; color: var(--text);
-      background: #fff; transition: border-color .15s; outline: none; font-family: inherit;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
-    .field textarea { resize: vertical; min-height: 80px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .user-badge {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg); border-radius: 8px;
-      padding: 10px 13px; margin-bottom: 22px;
-    }
-    .user-badge .avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--primary); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; font-weight: 600; flex-shrink: 0;
-    }
-    .user-badge .name { font-size: 14px; font-weight: 600; }
-    .user-badge .code { font-size: 12px; color: var(--muted); }
-    .btn {
-      width: 100%; padding: 12px; border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      transition: background .15s, opacity .15s; font-family: inherit;
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-h); }
-    .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
-    .alert { display: none; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-    .alert.show { display: block; }
-    .alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
     .loading-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(255,255,255,.75);
@@ -88,29 +46,13 @@
     }
     .loading-overlay.show { display: flex; }
     .loading-overlay p { font-size: 13px; color: var(--muted); }
-    .success-box { text-align: center; padding: 8px 0; }
-    .success-box .check { font-size: 52px; line-height: 1; margin-bottom: 16px; }
-    .success-box h2 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
-    .success-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .req-id {
-      display: inline-block; background: var(--bg); border-radius: 6px;
-      padding: 4px 10px; font-size: 13px; font-weight: 600;
-      font-family: monospace; color: var(--primary); margin-top: 10px;
-    }
     .spinner {
       display: inline-block; width: 20px; height: 20px;
       border: 3px solid rgba(26,111,232,.2);
       border-top-color: var(--primary); border-radius: 50%;
       animation: spin .7s linear infinite;
     }
-    .btn .spinner {
-      width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4);
-      border-top-color: #fff; vertical-align: middle; margin-right: 6px;
-    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 400px) { .field-row { grid-template-columns: 1fr; } .card-body { padding: 20px; } }
-
-    /* Debug info */
     .debug-box {
       margin-top: 16px; padding: 10px; background: #f8f9fa;
       border: 1px solid #dee2e6; border-radius: 6px;
@@ -120,7 +62,6 @@
 </head>
 <body>
 
-<!-- Hidden app info cho SDK -->
 <div id="seatalk_login_app_info"
   data-appid="NDk1ODMxNDEwNTc5"
   data-redirect_uri="https://van90bg.github.io/leave-form/"
@@ -140,282 +81,85 @@
     <p>HN2 Station · SPX Express</p>
   </div>
   <div class="card-body">
+    <div class="login-box">
+      <div class="icon">🔐</div>
+      <h2>Xác thực tài khoản</h2>
+      <p>Đăng nhập bằng tài khoản SeaTalk<br>để tiếp tục điền đơn nghỉ phép.</p>
 
-    <!-- STEP 1: Login -->
-    <div class="step active" id="step-login">
-      <div class="login-box">
-        <div class="icon">🔐</div>
-        <h2>Xác thực tài khoản</h2>
-        <p>Đăng nhập bằng tài khoản SeaTalk<br>để tiếp tục điền đơn nghỉ phép.</p>
+      <div id="seatalk_login_button_wrap">
+        <div id="seatalk_login_button" data-size="large" data-theme="default"></div>
+      </div>
 
-        <!-- SDK sẽ render vào đây -->
-        <div id="seatalk_login_button_wrap">
-          <div id="seatalk_login_button"
-            data-size="large"
-            data-theme="default">
-          </div>
-        </div>
+      <button class="btn-seatalk-fallback" id="btn-fallback" onclick="loginFallback()">
+        🔑 Đăng nhập với SeaTalk
+      </button>
 
-        <!-- Fallback nếu SDK không load (hiện sau 3 giây) -->
-        <button class="btn-seatalk-fallback" id="btn-fallback" onclick="loginFallback()">
-          🔑 Đăng nhập với SeaTalk
-        </button>
+      <div class="alert alert-error" id="login-error" style="display:none;margin-top:16px;padding:10px 14px;border-radius:8px;font-size:13px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA"></div>
 
-        <div class="alert alert-error" id="login-error" style="margin-top:16px"></div>
-
-        <!-- Debug info (xóa sau khi test xong) -->
-        <div class="debug-box" id="debug-box" style="display:none">
-          <strong>Debug:</strong><br>
-          SDK loaded: <span id="dbg-sdk">...</span><br>
-          URL params: <span id="dbg-params">...</span>
-        </div>
+      <div class="debug-box" id="debug-box" style="display:none">
+        <strong>Debug:</strong><br>
+        SDK loaded: <span id="dbg-sdk">...</span><br>
+        URL params: <span id="dbg-params">...</span>
       </div>
     </div>
-
-    <!-- STEP 2: Form -->
-    <div class="step" id="step-form">
-      <div class="alert alert-error" id="form-error"></div>
-      <div class="user-badge">
-        <div class="avatar" id="user-avatar">?</div>
-        <div class="info">
-          <div class="name" id="user-name">—</div>
-          <div class="code" id="user-code">—</div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Team Lead phê duyệt</label>
-        <select id="tl-select"><option value="">— Chọn Team Lead —</option></select>
-      </div>
-      <div class="field">
-        <label>Loại nghỉ phép</label>
-        <select id="leave-type">
-          <option value="">— Chọn loại nghỉ —</option>
-          <option>Nghỉ phép năm</option>
-          <option>Nghỉ bệnh</option>
-          <option>Nghỉ việc riêng</option>
-          <option>Nghỉ không lương</option>
-        </select>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Ngày bắt đầu</label><input type="date" id="start-date"/></div>
-        <div class="field"><label>Ngày kết thúc</label><input type="date" id="end-date"/></div>
-      </div>
-      <div class="field">
-        <label>Lý do</label>
-        <textarea id="reason" placeholder="Nhập lý do nghỉ phép..."></textarea>
-      </div>
-      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">Gửi đơn nghỉ phép</button>
-    </div>
-
-    <!-- STEP 3: Success -->
-    <div class="step" id="step-success">
-      <div class="success-box">
-        <div class="check">✅</div>
-        <h2>Đơn đã được gửi!</h2>
-        <p>Team Lead sẽ nhận được thông báo<br>và phê duyệt đơn của bạn qua SeaTalk.</p>
-        <div class="req-id" id="req-id-display"></div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- Load SDK sau khi DOM sẵn sàng -->
 <script>
-// ═══════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbx54kvjD6zZP3X-PeJYzuJ1Za2Y6J3NTl1ata6B-sfDICV5yGh3Sbx6xSp5TJtTVDY7Gg/exec'; // ← Điền URL GAS deploy mới vào đây
-const APP_ID  = 'NDk1ODMxNDEwNTc5';
-const REDIRECT_URI = 'https://van90bg.github.io/leave-form/';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx54kvjD6zZP3X-PeJYzuJ1Za2Y6J3NTl1ata6B-sfDICV5yGh3Sbx6xSp5TJtTVDY7Gg/exec';
 
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let empCode = '', empName = '';
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.style.display = 'block';
+}
 
-// ═══════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════
-function showStep(id) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function showError(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg; el.classList.add('show');
-}
-function hideError(id) {
-  const el = document.getElementById(id);
-  el.textContent = ''; el.classList.remove('show');
-}
-function setLoading(on, msg = 'Đang xử lý...') {
+function setLoading(on, msg) {
   const el = document.getElementById('loading');
-  el.querySelector('p').textContent = msg;
+  if (msg) el.querySelector('p').textContent = msg;
   el.classList.toggle('show', on);
 }
+
 function dbg(key, val) {
   const box = document.getElementById('debug-box');
   if (box) { box.style.display = 'block'; document.getElementById('dbg-' + key).textContent = val; }
 }
 
-// ═══════════════════════════════════════════════
-// FALLBACK LOGIN (không dùng SDK)
-// ═══════════════════════════════════════════════
 function loginFallback() {
-  // Tìm đúng endpoint từ SDK source, thử các endpoint phổ biến của SeaTalk
-  // Dựa trên tài liệu: SDK tự handle redirect, ta không có URL public
-  // Fallback: dùng deep link SeaTalk app nếu trên mobile
   alert('⚠️ SeaTalk SDK không tải được.\n\nVui lòng mở form trong SeaTalk (bấm link từ bot) thay vì browser thông thường.');
 }
 
-// ═══════════════════════════════════════════════
-// OAUTH CALLBACK — xử lý ?code= trong URL
-// ═══════════════════════════════════════════════
-function jsonp(url) {
-  return new Promise((resolve, reject) => {
-    const cb = 'callback' + Date.now();
-    window[cb] = data => { delete window[cb]; resolve(data); };
-    const s = document.createElement('script');
-    s.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
-    s.onerror = () => { delete window[cb]; reject(new Error('JSONP load failed')); };
-    document.head.appendChild(s);
-  });
-}
-
-async function handleOAuthCallback() {
+function handleOAuthCallback() {
   const params = new URLSearchParams(window.location.search);
-  const code   = params.get('code');
-  const state  = params.get('state');
+  const code = params.get('code');
+  const state = params.get('state');
 
-  dbg('params', code ? `code=${code.slice(0,8)}... state=${state}` : 'không có code');
+  dbg('params', code ? 'code=' + code.slice(0, 8) + '... state=' + state : 'không có code');
 
   if (!code || state !== 'leave_form') return;
 
   window.history.replaceState({}, document.title, window.location.pathname);
   setLoading(true, 'Đang xác thực tài khoản...');
 
-  try {
-    const data = await jsonp(`${GAS_URL}?action=verify&code=${encodeURIComponent(code)}`);
-
-    if (!data.success) {
-      setLoading(false);
-      showError('login-error', '⚠️ Xác thực thất bại: ' + (data.error || 'Lỗi không xác định'));
-      return;
-    }
-
-    empCode = data.empCode;
-    empName = data.empName;
-
-    document.getElementById('user-name').textContent   = empName;
-    document.getElementById('user-code').textContent   = empCode;
-    document.getElementById('user-avatar').textContent = empName.charAt(0).toUpperCase();
-
-    setLoading(true, 'Đang tải danh sách Team Lead...');
-    await loadTeamLeads();
-
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('start-date').value = today;
-    document.getElementById('end-date').value   = today;
-    document.getElementById('start-date').min   = today;
-    document.getElementById('end-date').min     = today;
-
-    setLoading(false);
-    showStep('step-form');
-
-  } catch (err) {
-    setLoading(false);
-    showError('login-error', '⚠️ Không thể kết nối máy chủ: ' + err.message);
-  }
+  // Redirect thẳng sang GAS — GAS sẽ serve form HTML
+  window.location.href = GAS_URL + '?action=verify&code=' + encodeURIComponent(code);
 }
 
-async function loadTeamLeads() {
-  try {
-    const data = await jsonp(`${GAS_URL}?action=teamleads`);
-    const sel  = document.getElementById('tl-select');
-    sel.innerHTML = '<option value="">— Chọn Team Lead —</option>';
-    if (data.success && data.leads) {
-      data.leads.forEach(tl => {
-        const opt = document.createElement('option');
-        opt.value = JSON.stringify({ code: tl.code, name: tl.name });
-        opt.textContent = tl.name;
-        sel.appendChild(opt);
-      });
-    }
-  } catch (err) { console.error('loadTeamLeads:', err); }
-}
-
-async function submitForm() {
-  hideError('form-error');
-  const tlRaw = document.getElementById('tl-select').value;
-  const leaveType = document.getElementById('leave-type').value;
-  const startDate = document.getElementById('start-date').value;
-  const endDate   = document.getElementById('end-date').value;
-  const reason    = document.getElementById('reason').value.trim();
-
-  if (!tlRaw)              return showError('form-error', '⚠️ Vui lòng chọn Team Lead.');
-  if (!leaveType)          return showError('form-error', '⚠️ Vui lòng chọn loại nghỉ phép.');
-  if (!startDate)          return showError('form-error', '⚠️ Vui lòng chọn ngày bắt đầu.');
-  if (!endDate)            return showError('form-error', '⚠️ Vui lòng chọn ngày kết thúc.');
-  if (endDate < startDate) return showError('form-error', '⚠️ Ngày kết thúc phải sau ngày bắt đầu.');
-  if (!reason)             return showError('form-error', '⚠️ Vui lòng nhập lý do.');
-
-  const tl  = JSON.parse(tlRaw);
-  const fmt = d => d.split('-').reverse().join('/');
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Đang gửi...';
-
-  try {
-    const qs = new URLSearchParams({ action:'submit', empCode, empName,
-      tlCode: tl.code, tlName: tl.name, leaveType,
-      startDate: fmt(startDate), endDate: fmt(endDate), reason });
-    const data = await jsonp(`${GAS_URL}?${qs}`);
-    if (data.success) {
-      document.getElementById('req-id-display').textContent = 'Mã đơn: #' + data.reqId;
-      showStep('step-success');
-    } else {
-      showError('form-error', '⚠️ ' + (data.error || 'Gửi thất bại.'));
-      btn.disabled = false; btn.textContent = 'Gửi đơn nghỉ phép';
-    }
-  } catch (err) {
-    showError('form-error', '⚠️ Không thể kết nối máy chủ.');
-    btn.disabled = false; btn.textContent = 'Gửi đơn nghỉ phép';
-  }
-}
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // Validate end date
-  document.getElementById('start-date').addEventListener('change', function () {
-    document.getElementById('end-date').min = this.value;
-    if (document.getElementById('end-date').value < this.value)
-      document.getElementById('end-date').value = this.value;
-  });
-
-  // Xử lý OAuth callback trước
   handleOAuthCallback();
 
-  // Load SDK động
   const script = document.createElement('script');
   script.src = 'https://static.cdn.haiserve.com/seatalk/client/shared/sop/auth.js';
-  script.onload = () => {
-    dbg('sdk', 'loaded ✅');
-    // SDK tự render vào #seatalk_login_button sau khi load
-  };
+  script.onload = () => dbg('sdk', 'loaded \u2705');
   script.onerror = () => {
-    dbg('sdk', 'FAILED ❌ — hiện fallback button');
+    dbg('sdk', 'FAILED \u274C');
     document.getElementById('btn-fallback').style.display = 'inline-block';
   };
   document.head.appendChild(script);
 
-  // Sau 4 giây, nếu #seatalk_login_button vẫn rỗng → show fallback
   setTimeout(() => {
     const btn = document.getElementById('seatalk_login_button');
     if (!btn.children.length && !btn.innerHTML.trim()) {
-      dbg('sdk', 'timeout — không render được, hiện fallback');
+      dbg('sdk', 'timeout');
       document.getElementById('btn-fallback').style.display = 'inline-block';
     }
   }, 4000);
